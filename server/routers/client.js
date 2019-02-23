@@ -26,7 +26,7 @@ VALUES ($1, $2)`;
 
 const getEvents = async (db, req, res) => {
   const { sessionId } = req.cookies;
-  const { rows: [user] } = await db.query(getUser, [sessionId]);
+  const { rows: [user] } = await db.query(GET_USER, [sessionId]);
 
   if (!user) {
     return 401;
@@ -38,7 +38,7 @@ const getEvents = async (db, req, res) => {
 
 const getProposals = async (db, req, res) => {
   const { sessionId } = req.cookies;
-  const { rows: [user] } = await db.query(getUser, [sessionId]);
+  const { rows: [user] } = await db.query(GET_USER, [sessionId]);
 
   if (!user) {
     return 401;
@@ -50,7 +50,7 @@ const getProposals = async (db, req, res) => {
 
 const propose = async (db, req) => {
   const { sessionId } = req.cookies;
-  const { rows: [user] } = await db.query(getUser, [sessionId]);
+  const { rows: [user] } = await db.query(GET_USER, [sessionId]);
   const {
     eventId,
     hostId,
@@ -66,7 +66,7 @@ const propose = async (db, req) => {
 
 const vote = async (db, req) => {
   const { sessionId } = req.cookies;
-  const { rows: [user] } = await db.query(getUser, [sessionId]);
+  const { rows: [user] } = await db.query(GET_USER, [sessionId]);
   const { proposalId } = req.body;
 
   if (!user) {

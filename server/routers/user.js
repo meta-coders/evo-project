@@ -6,10 +6,12 @@ const { GET_USER } = require('./utils');
 const roles = require('../config/roles');
 
 const client = require('./client');
+const host = require('./host');
 
 const user = express.Router();
 
 user.use('/client', client);
+user.use('/host', host);
 
 module.exports = user;
 
