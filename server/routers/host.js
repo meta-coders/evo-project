@@ -2,7 +2,7 @@
 
 const express = require('express');
 const { connect } = require('../src/db');
-const { GET_USER } = require('./utils');
+const { GET_USER, UPDATE_EVENT } = require('./utils');
 
 const host = express.Router();
 
@@ -28,16 +28,12 @@ const GET_VOTES = `SELECT COUNT(*) FROM "Votes" WHERE "ProposalId" = $1`;
 
 const ACCEPT_PROPOSAL = `
 UPDATE "Proposal" 
-SET "Accepted" = TRUE 
+SET "AcceptedByHost" = TRUE
 WHERE "ProposalId" = $1`;
 
-const UPDATE_EVENT = `
-UPDATE "Event"
-SET "MusicianIds" = ARRAY_APPEND(
-  "MusicianIds",
-  (SELECT "MusicianId" FROM "Proposal" WHERE "ProposalId" = $1)
-)
-WHERE "EventId" = (SELECT "EventId" FROM "Proposal" WHERE "ProposalId" = $1)`;
+const CREATE_PROPOSAL = `
+INSERT INTO "Proposal" ("EventId", "HostId", "MusicianId", "AcceptedByHost")
+VALUES ($2, (SELECT "HostId" FROM "Host" WHERE "UserId" = $1), $3, TRUE)`;
 
 const getEvents = async (db, req, res) => {
   const { sessionId } = req.cookies;
@@ -90,7 +86,25 @@ const accept = async (db, req) => {
   const { proposalId } = req.body;
 
   await db.query(ACCEPT_PROPOSAL, [proposalId]);
-  await db.query(UPDATE_EVENT, [proposalId]);
+
+  const { res: [proposal] } = await db.query(
+    'SELECT * FROM "Proposal" WHERE "ProposalId"',
+    [proposalId]
+  );
+
+  if (proposal.AcceptedByMusician) await db.query(UPDATE_EVENT, [proposalId]);
+};
+
+const propose = async (db, req) => {
+  const { sessionId } = req.cookies;
+  const { rows: [user] } = await db.query(GET_USER, [sessionId]);
+
+  if (!user) {
+    return 401;
+  }
+
+  const { eventId, musicianId } = req.body;
+  await db.query(CREATE_PROPOSAL, [user.UserId, eventId, musicianId]);
 };
 
 host.get('/events', async (req, res) => {
@@ -112,6 +126,14 @@ host.get('/proposals', async (req, res) => {
 host.post('/accept', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
   accept(db, req, res)
+    .then(code => res.sendStatus(code || 200))
+    .catch(() => res.sendStatus(500))
+    .finally(() => db.end());
+});
+
+host.post('/propose', async (req, res) => {
+  const db = await connect(env.DATABASE_URL);
+  propose(db, req)
     .then(code => res.sendStatus(code || 200))
     .catch(() => res.sendStatus(500))
     .finally(() => db.end());

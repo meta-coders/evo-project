@@ -21,12 +21,8 @@ app.use(api);
 api.use('/auth', auth);
 api.use('/user', user);
 
-const setup = async () => {
-  await db.setup(env.DATABASE_URL);
-}
-
 app.listen(env.PORT, env.HOST, () => {
-  setup(env.DATABASE_URL)
+  db.setup(env.DATABASE_URL)
     .then(() => {
       console.info({
         PORT: env.PORT,
