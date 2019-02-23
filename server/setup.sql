@@ -48,11 +48,12 @@ CREATE TABLE IF NOT EXISTS "Event" (
 );
 
 CREATE TABLE IF NOT EXISTS "Proposal" (
-  "ProposalId" SERIAL PRIMARY KEY,
-  "EventId"    INTEGER REFERENCES "Event" ("EventId"),
-  "HostId"     INTEGER REFERENCES "Host" ("HostId"),
-  "MusicianId" INTEGER REFERENCES "Musician" ("MusicianId"),
-  "Accepted"   BOOLEAN
+  "ProposalId"         SERIAL PRIMARY KEY,
+  "EventId"            INTEGER REFERENCES "Event" ("EventId"),
+  "HostId"             INTEGER REFERENCES "Host" ("HostId"),
+  "MusicianId"         INTEGER REFERENCES "Musician" ("MusicianId"),
+  "AcceptedByMusician" BOOLEAN,
+  "AcceptedByHost"     BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS "Vote" (

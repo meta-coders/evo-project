@@ -6,11 +6,13 @@ const { GET_USER } = require('./utils');
 const roles = require('../config/roles');
 
 const client = require('./client');
+const musician = require('./musician');
 const host = require('./host');
 
 const user = express.Router();
 
 user.use('/client', client);
+user.use('/musician', musician);
 user.use('/host', host);
 
 module.exports = user;
