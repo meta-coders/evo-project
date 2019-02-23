@@ -16,6 +16,7 @@ const api = express.Router();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static('dist'));
 
 app.use(api);
 api.use('/auth', auth);
