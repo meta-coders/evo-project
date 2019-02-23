@@ -11,42 +11,51 @@ CREATE TABLE IF NOT EXISTS "Session" (
 );
 
 CREATE TABLE IF NOT EXISTS "Client" (
-  "UserId" INTEGER REFERENCES "User" ("UserId"),
-  "Avatar" TEXT
+  "ClientId"  SERIAL PRIMARY KEY,
+  "UserId"    INTEGER REFERENCES "User" ("UserId"),
+  "ClientAvatar"    TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "Musician" (
+  "MusicianId"  SERIAL PRIMARY KEY,
   "UserId"      INTEGER REFERENCES "User" ("UserId"),
-  "Name"        TEXT,
-  "Avatar"     TEXT,
-  "Description" TEXT,
-  "Tracks"      JSON
+  "MusicianName"        TEXT,
+  "MusicianAvatar"      TEXT,
+  "MusicianDescription" TEXT,
+  "MusicianTracks"      JSON
 );
 
 CREATE TABLE IF NOT EXISTS "Host" (
+  "HostId"      SERIAL PRIMARY KEY,
   "UserId"      INTEGER REFERENCES "User" ("UserId"),
-  "Name"        TEXT,
-  "Avatar"      TEXT,
-  "Interior"    TEXT[],
-  "City"        TEXT,
-  "Address"     TEXT,
-  "Description" TEXT
+  "HostName"        TEXT,
+  "HostAvatar"      TEXT,
+  "HostInterior"    TEXT[],
+  "HostCity"        TEXT,
+  "HostAddress"     TEXT,
+  "HostDescription" TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "Event" (
   "EventId"     SERIAL PRIMARY KEY,
   "HostId"      INTEGER REFERENCES "User" ("UserId"),
-  "MusicianId"  INTEGER[],
-  "Title"       TEXT,
-  "Description" TEXT,
-  "Date"        DATE,
-  "StartTime"   TIME
+  "MusicianIds" INTEGER[],
+  "EventTitle"       TEXT,
+  "EventDescription" TEXT,
+  "EventDate"        DATE,
+  "EventStartTime"   TIME,
+  "EventEndTime"     TIME
 );
 
---
--- CREATE TABLE IF NOT EXISTS "Petition" (
---   "PetitionId" SERIAL PRIMARY KEY,
---   "EventId"    INTEGER REFERENCES "Event"("EventId"),
---   "Accepted"   BOOLEAN
--- )
---
+CREATE TABLE IF NOT EXISTS "Proposal" (
+  "ProposalId" SERIAL PRIMARY KEY,
+  "EventId"    INTEGER REFERENCES "Event" ("EventId"),
+  "HostId"     INTEGER REFERENCES "Host" ("HostId"),
+  "MusicianId" INTEGER REFERENCES "Musician" ("MusicianId"),
+  "Accepted"   BOOLEAN
+);
+
+CREATE TABLE IF NOT EXISTS "Vote" (
+  "ProposalId" INTEGER REFERENCES "Proposal" ("ProposalId"),
+  "ClientId"   INTEGER REFERENCES "Client" ("ClientId")
+);

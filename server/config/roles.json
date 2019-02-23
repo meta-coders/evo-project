@@ -1,0 +1,22 @@
+{
+  "Client": [
+    "getFeed",
+    "addProposal",
+    "vote"
+  ],
+
+  "Musician": [
+    "getEvents",
+    "addEvent",
+    "showTracks",
+    "addTrack",
+    "showProfile",
+    "editProfile"
+  ],
+
+  "Host": [
+    "getEvents",
+    "getProposals",
+    "acceptProposal"
+  ]
+}

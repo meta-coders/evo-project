@@ -2,22 +2,22 @@
 
 const express = require('express');
 const { connect } = require('../src/db');
+const { GET_USER } = require('./utils');
+const roles = require('../config/roles');
+
+const client = require('./client');
 
 const user = express.Router();
 
-module.exports = user;
+user.use('/client', client);
 
-const getUser = `
-SELECT "User".*
-FROM "User"
-JOIN "Session" ON "User"."UserId" = "Session"."UserId"
-WHERE "Session"."SessionId" = $1`;
+module.exports = user;
 
 const getDetails = role => `SELECT * FROM "${role}" WHERE "UserId" = $1`;
 
 const getUserDetails = async (db, req, res) => {
   const { sessionId } = req.cookies;
-  const { rows: [user] } = await db.query(getUser, [sessionId]);
+  const { rows: [user] } = await db.query(GET_USER, [sessionId]);
 
   if (!user) {
     return 401;
@@ -31,7 +31,7 @@ const getUserDetails = async (db, req, res) => {
     return 404;
   }
 
-  res.json({ details });
+  res.json({ actions: roles[user.Role], details });
 };
 
 user.get('/details', async (req, res) => {
