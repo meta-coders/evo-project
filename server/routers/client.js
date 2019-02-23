@@ -15,11 +15,11 @@ SELECT * FROM "Proposal"
 LEFT JOIN "Event" ON "Proposal"."EventId" = "Event"."EventId"
 LEFT JOIN "Host" ON "Proposal"."HostId" = "Host"."HostId"
 LEFT JOIN "Musician" ON "Proposal"."MusicianId" = "Musician"."MusicianId"
-WHERE NOT "Proposal"."Accepted"`;
+WHERE NOT ("Proposal"."AcceptedByHost" AND "Proposal"."AcceptedByMusician")`;
 
 const CREATE_PROPOSAL = `
-INSERT INTO "Proposal" ("EventId", "HostId", "MusicianId") 
-VALUES ($1, $2, $3)`;
+INSERT INTO "Proposal" ("EventId", "HostId", "MusicianId", "AcceptedByHost", "AcceptedByMusician") 
+VALUES ($1, $2, $3, FALSE, FALSE)`;
 
 const CREATE_VOTE = `
 INSERT INTO "Vote" ("ProposalId", "ClientId") 
@@ -79,32 +79,44 @@ const vote = async (db, req) => {
 
 client.get('/events', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
-  getEvents(dv, req, res)
-    .then(code => res.sendStatus(code || 200))
-    .catch(() => res.sendStatus(500))
-    .finally(() => db.end());
+  getEvents(db, req, res)
+    .then(code => res.status(code || 200))
+    .catch(() => res.status(500))
+    .finally(() => {
+      res.end();
+      db.end();
+    });
 });
 
 client.get('/proposals', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
   getProposals(db, req, res)
-    .then(code => res.sendStatus(code || 200))
-    .catch(() => res.sendStatus(500))
-    .finally(() => db.end());
+    .then(code => res.status(code || 200))
+    .catch(() => res.status(500))
+    .finally(() => {
+      res.end();
+      db.end();
+    });
 });
 
 client.post('/propose', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
   propose(db, req, res)
-    .then(code => res.sendStatus(code || 200))
-    .catch(() => res.sendStatus(500))
-    .finally(() => db.end());
+    .then(code => res.status(code || 200))
+    .catch(() => res.status(500))
+    .finally(() => {
+      res.end();
+      db.end();
+    });
 });
 
 client.post('/vote', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
   vote(db, req, res)
-    .then(code => res.sendStatus(code || 200))
-    .catch(() => res.sendStatus(500))
-    .finally(() => db.end());
+    .then(code => res.status(code || 200))
+    .catch(() => res.status(500))
+    .finally(() => {
+      res.end();
+      db.end();
+    });
 });

@@ -14,7 +14,7 @@ const DROP_SESSION = `DELETE FROM "Session" WHERE "SessionId" = $1`;
 
 const validateCredentials = (user, password) => {
   if (!user) return false;
-  return user.password === password;
+  return user.Password === password;
 };
 
 const signin = async (db, req, res) => {
@@ -28,7 +28,7 @@ const signin = async (db, req, res) => {
   }
 
   const sessionId = generateSID(env.SID_LENGTH);
-  await db.query(CREATE_SESSION, [user.UserId, sessionId]);
+  await db.query(CREATE_SESSION, [sessionId, user.UserId]);
 
   res.cookie('sessionId', sessionId);
   res.json({ role: user.Role });
@@ -45,7 +45,10 @@ auth.post('/signin', async (req, res) => {
   signin(db, req, res)
     .then(code => res.status(code || 200))
     .catch(() => res.status(500))
-    .finally(() => db.end());
+    .finally(() => {
+      res.end();
+      db.end();
+    });
 });
 
 auth.post('/signout', async (req, res) => {
@@ -53,5 +56,8 @@ auth.post('/signout', async (req, res) => {
   signout(db, req, res)
     .then(() => res.status(200))
     .catch(() => res.status(500))
-    .finally(() => db.end());
+    .finally(() => {
+      res.end();
+      db.end();
+    });
 });
