@@ -11,19 +11,22 @@ CREATE TABLE IF NOT EXISTS "Session" (
 );
 
 CREATE TABLE IF NOT EXISTS "Client" (
-  "UserId" INTEGER REFERENCES "User" ("UserId"),
-  "Avatar" TEXT
+  "ClientId"  SERIAL PRIMARY KEY,
+  "UserId"    INTEGER REFERENCES "User" ("UserId"),
+  "Avatar"    TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "Musician" (
+  "MusicianId"  SERIAL PRIMARY KEY,
   "UserId"      INTEGER REFERENCES "User" ("UserId"),
   "Name"        TEXT,
-  "Avatar"     TEXT,
+  "Avatar"      TEXT,
   "Description" TEXT,
   "Tracks"      JSON
 );
 
 CREATE TABLE IF NOT EXISTS "Host" (
+  "HostId"      SERIAL PRIMARY KEY,
   "UserId"      INTEGER REFERENCES "User" ("UserId"),
   "Name"        TEXT,
   "Avatar"      TEXT,
@@ -36,7 +39,7 @@ CREATE TABLE IF NOT EXISTS "Host" (
 CREATE TABLE IF NOT EXISTS "Event" (
   "EventId"     SERIAL PRIMARY KEY,
   "HostId"      INTEGER REFERENCES "User" ("UserId"),
-  "MusicianIds"  INTEGER[],
+  "MusicianIds" INTEGER[],
   "Title"       TEXT,
   "Description" TEXT,
   "Date"        DATE,
@@ -46,12 +49,12 @@ CREATE TABLE IF NOT EXISTS "Event" (
 CREATE TABLE IF NOT EXISTS "Proposal" (
   "ProposalId" SERIAL PRIMARY KEY,
   "EventId"    INTEGER REFERENCES "Event" ("EventId"),
-  "HostId"     INTEGER REFERENCES "Host" ("UserId"),
-  "MusicianId" INTEGER REFERENCES "Musician" ("UserId"),
+  "HostId"     INTEGER REFERENCES "Host" ("HostId"),
+  "MusicianId" INTEGER REFERENCES "Musician" ("MusicianId"),
   "Accepted"   BOOLEAN
 );
 
 CREATE TABLE IF NOT EXISTS "Vote" (
   "ProposalId" INTEGER REFERENCES "Proposal" ("ProposalId"),
-  "ClientId"   INTEGER REFERENCES "Client" ("UserId")
+  "ClientId"   INTEGER REFERENCES "Client" ("ClientId")
 );

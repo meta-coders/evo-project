@@ -5,7 +5,11 @@ const { connect } = require('../src/db');
 const { GET_USER } = require('./utils');
 const roles = require('../config/roles');
 
+const client = require('./client');
+
 const user = express.Router();
+
+user.use('/client', client);
 
 module.exports = user;
 
