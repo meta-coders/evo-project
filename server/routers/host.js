@@ -4,9 +4,9 @@ const express = require('express');
 const { connect } = require('../src/db');
 const { GET_USER } = require('./utils');
 
-const client = express.Router();
+const host = express.Router();
 
-module.exports = client;
+module.exports = host;
 
 const GET_EVENTS = `
 SELECT "Event".* 
