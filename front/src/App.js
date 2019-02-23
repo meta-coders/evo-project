@@ -9,7 +9,7 @@ import './App.css';
 class App extends Component {
   render() {
     return (
-      <div className="App">
+      <div>
         <Switch>
           <Route exact path="/eventCard" component={EventCardContainer} />
           <Route exact path="/login" component={LoginPage} />
