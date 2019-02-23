@@ -5,6 +5,13 @@ CREATE TABLE IF NOT EXISTS "User" (
   "Role"     TEXT
 );
 
+
+CREATE TABLE IF NOT EXISTS "Session" (
+  "SessionId" TEXT PRIMARY KEY,
+  "UserId"    INTEGER REFERENCES "User" ("UserId")
+);
+
+
 CREATE TABLE IF NOT EXISTS "Client" (
   "UserId" INTEGER REFERENCES "User" ("UserId"),
   "Avatar" TEXT
