@@ -16,7 +16,7 @@ const connect = async url => {
 
 const setup = async url => {
   const client = await connect(url);
-  const setup = await readFile(SETUP_SQL);
+  const setup = await readFile(SETUP_SQL, 'utf8');
   await client.query(setup);
 };
 

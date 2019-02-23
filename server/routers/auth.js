@@ -24,8 +24,7 @@ const signin = async (db, req, res) => {
   const valid = validateCredentials(user, password);
 
   if (!valid) {
-    res.status(403).send('Invalid credentials');
-    return;
+    return 403;
   }
 
   const sessionId = generateSID(env.SID_LENGTH);
@@ -43,15 +42,16 @@ const signout = async (db, req, res) => {
 
 auth.post('/signin', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
-
   signin(db, req, res)
-    .then(() => res.status(200))
+    .then(code => res.status(code || 200))
     .catch(() => res.status(500))
     .finally(() => db.end());
 });
 
 auth.post('/signout', async (req, res) => {
-  signout(req, res)
+  const db = await connect(env.DATABASE_URL);
+  signout(db, req, res)
     .then(() => res.status(200))
-    .catch(() => res.status(500));
+    .catch(() => res.status(500))
+    .finally(() => db.end());
 });
