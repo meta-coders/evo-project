@@ -1,3 +1,4 @@
+import EventCard from './EventCard';
 import Sidebar from './Sidebar';
 
-export { Sidebar };
+export { EventCard, Sidebar };
