@@ -31,7 +31,7 @@ const styles = {
   }
 };
 
-const Sidebar = ({ alt, avatar, children, classes, name }) => (
+const Sidebar = ({ avatar, children, classes, name }) => (
   <Drawer
     className={classes.drawer}
     variant="permanent"
@@ -41,7 +41,7 @@ const Sidebar = ({ alt, avatar, children, classes, name }) => (
     anchor="left"
   >
     <div className={classes.user}>
-      <Avatar alt={alt} src={avatar} className={classes.avatar} />
+      <Avatar src={avatar} className={classes.avatar} />
       <Typography component="h1" variant="h5">
         {name}
       </Typography>
@@ -52,7 +52,6 @@ const Sidebar = ({ alt, avatar, children, classes, name }) => (
 );
 
 Sidebar.propTypes = {
-  alt: PropTypes.string,
   avatar: PropTypes.string,
   classes: PropTypes.object.isRequired,
   name: PropTypes.string,
