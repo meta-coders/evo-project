@@ -30,8 +30,6 @@ app.listen(env.PORT, env.HOST, () => {
     .then(() => {
       console.info({
         PORT: env.PORT,
-        HOST: env.HOST,
-        IP: os.networkInterfaces().wlp2s0[0].address,
       });
     })
     .catch(err => {

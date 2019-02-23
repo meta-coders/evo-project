@@ -22,9 +22,22 @@ FROM "Proposal"
 JOIN "Host" ON "Proposal"."HostId" = "Host"."HostId"
 LEFT JOIN "Event" ON "Proposal"."EventId" = "Event"."EventId"
 LEFT JOIN "Musician" ON "Proposal"."MusicianId" = "Musician"."MusicianId"
-WHERE "Host"."UserId" = $1`;
+WHERE "Host"."UserId" = $1 AND NOT "Proposal"."Accepted"`;
 
 const GET_VOTES = `SELECT COUNT(*) FROM "Votes" WHERE "ProposalId" = $1`;
+
+const ACCEPT_PROPOSAL = `
+UPDATE "Proposal" 
+SET "Accepted" = TRUE 
+WHERE "ProposalId" = $1`;
+
+const UPDATE_EVENT = `
+UPDATE "Event"
+SET "MusicianIds" = ARRAY_APPEND(
+  "MusicianIds",
+  (SELECT "MusicianId" FROM "Proposal" WHERE "ProposalId" = $1)
+)
+WHERE "EventId" = (SELECT "EventId" FROM "Proposal" WHERE "ProposalId" = $1)`;
 
 const getEvents = async (db, req, res) => {
   const { sessionId } = req.cookies;
@@ -66,9 +79,23 @@ const getProposals = async (db, req, res) => {
   res.json({ proposals });
 };
 
+const accept = async (db, req) => {
+  const { sessionId } = req.cookies;
+  const { rows: [user] } = await db.query(GET_USER, [sessionId]);
+
+  if (!user) {
+    return 401;
+  }
+
+  const { proposalId } = req.body;
+
+  await db.query(ACCEPT_PROPOSAL, [proposalId]);
+  await db.query(UPDATE_EVENT, [proposalId]);
+};
+
 host.get('/events', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
-  getEvents(db, req, res)
+  getEvents(db, req)
     .then(code => res.sendStatus(code || 200))
     .catch(() => res.sendStatus(500))
     .finally(() => db.end());
@@ -77,6 +104,14 @@ host.get('/events', async (req, res) => {
 host.get('/proposals', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
   getProposals(db, req, res)
+    .then(code => res.sendStatus(code || 200))
+    .catch(() => res.sendStatus(500))
+    .finally(() => db.end());
+});
+
+host.post('/accept', async (req, res) => {
+  const db = await connect(env.DATABASE_URL);
+  accept(db, req, res)
     .then(code => res.sendStatus(code || 200))
     .catch(() => res.sendStatus(500))
     .finally(() => db.end());
