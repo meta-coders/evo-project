@@ -8,6 +8,14 @@ const generateSID = size => {
   return sid.toString('hex');
 };
 
+const GET_USER = `
+SELECT "User".*
+FROM "User"
+JOIN "Session" ON "User"."UserId" = "Session"."UserId"
+WHERE "Session"."SessionId" = $1`;
+
+
 module.exports = {
   generateSID,
+  GET_USER,
 };

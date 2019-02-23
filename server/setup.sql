@@ -36,17 +36,22 @@ CREATE TABLE IF NOT EXISTS "Host" (
 CREATE TABLE IF NOT EXISTS "Event" (
   "EventId"     SERIAL PRIMARY KEY,
   "HostId"      INTEGER REFERENCES "User" ("UserId"),
-  "MusicianId"  INTEGER[],
+  "MusicianIds"  INTEGER[],
   "Title"       TEXT,
   "Description" TEXT,
   "Date"        DATE,
   "StartTime"   TIME
 );
 
---
--- CREATE TABLE IF NOT EXISTS "Petition" (
---   "PetitionId" SERIAL PRIMARY KEY,
---   "EventId"    INTEGER REFERENCES "Event"("EventId"),
---   "Accepted"   BOOLEAN
--- )
---
+CREATE TABLE IF NOT EXISTS "Proposal" (
+  "ProposalId" SERIAL PRIMARY KEY,
+  "EventId"    INTEGER REFERENCES "Event" ("EventId"),
+  "HostId"     INTEGER REFERENCES "Host" ("UserId"),
+  "MusicianId" INTEGER REFERENCES "Musician" ("UserId"),
+  "Accepted"   BOOLEAN
+);
+
+CREATE TABLE IF NOT EXISTS "Vote" (
+  "ProposalId" INTEGER REFERENCES "Proposal" ("ProposalId"),
+  "ClientId"   INTEGER REFERENCES "Client" ("UserId")
+);
