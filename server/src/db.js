@@ -1,20 +1,26 @@
 'use strict';
 
 const fs = require('fs');
+const path = require('path');
+const util = require('util');
 const { Client } = require('pg');
 
-const SETUP_SQL = 'setup.sql';
+const SETUP_SQL = path.join(__dirname, '..', 'setup.sql');
+const readFile = util.promisify(fs.readFile);
 
-const connect = async () => {
-  const client = new Client({
-    connectionString: config.databaseUrl,
-  });
-
-  const setup = fs.promises.readFile(SETUP_SQL);
+const connect = async url => {
+  const client = new Client({ connectionString: url });
   await client.connect();
-  await client.query(setup);
-
   return client;
 };
 
-module.exports = { connect };
+const setup = async url => {
+  const client = await connect(url);
+  const setup = await readFile(SETUP_SQL);
+  await client.query(setup);
+};
+
+module.exports = {
+  connect,
+  setup,
+};
