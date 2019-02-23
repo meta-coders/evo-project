@@ -11,14 +11,14 @@ CREATE TABLE IF NOT EXISTS "Session" (
 );
 
 CREATE TABLE IF NOT EXISTS "Client" (
-  "ClientId"  SERIAL PRIMARY KEY,
-  "UserId"    INTEGER REFERENCES "User" ("UserId"),
+  "ClientId"        SERIAL PRIMARY KEY,
+  "UserId"          INTEGER REFERENCES "User" ("UserId"),
   "ClientAvatar"    TEXT
 );
 
 CREATE TABLE IF NOT EXISTS "Musician" (
-  "MusicianId"  SERIAL PRIMARY KEY,
-  "UserId"      INTEGER REFERENCES "User" ("UserId"),
+  "MusicianId"          SERIAL PRIMARY KEY,
+  "UserId"              INTEGER REFERENCES "User" ("UserId"),
   "MusicianName"        TEXT,
   "MusicianAvatar"      TEXT,
   "MusicianDescription" TEXT,
@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS "Musician" (
 );
 
 CREATE TABLE IF NOT EXISTS "Host" (
-  "HostId"      SERIAL PRIMARY KEY,
-  "UserId"      INTEGER REFERENCES "User" ("UserId"),
+  "HostId"          SERIAL PRIMARY KEY,
+  "UserId"          INTEGER REFERENCES "User" ("UserId"),
   "HostName"        TEXT,
   "HostAvatar"      TEXT,
   "HostInterior"    TEXT[],
@@ -37,9 +37,9 @@ CREATE TABLE IF NOT EXISTS "Host" (
 );
 
 CREATE TABLE IF NOT EXISTS "Event" (
-  "EventId"     SERIAL PRIMARY KEY,
-  "HostId"      INTEGER REFERENCES "User" ("UserId"),
-  "MusicianIds" INTEGER[],
+  "EventId"          SERIAL PRIMARY KEY,
+  "HostId"           INTEGER REFERENCES "User" ("UserId"),
+  "MusicianIds"      INTEGER[],
   "EventTitle"       TEXT,
   "EventDescription" TEXT,
   "EventDate"        DATE,
