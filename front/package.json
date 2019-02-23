@@ -21,7 +21,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint .",
-    "fmt": "eslint .",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
