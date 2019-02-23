@@ -2,6 +2,7 @@
 
 const express = require('express');
 const { connect } = require('../src/db');
+const rolesConfig = require('../config/roles');
 
 const user = express.Router();
 
@@ -31,7 +32,7 @@ const getUserDetails = async (db, req, res) => {
     return 404;
   }
 
-  res.json({ details });
+  res.json({ actions: roles[user.Role], details });
 };
 
 user.get('/details', async (req, res) => {

@@ -5,7 +5,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const db = require('./src/db');
 
-global.env = require('./env');
+global.env = require('./config/env');
 Object.assign(env, process.env);
 
 const auth = require('./routers/auth');

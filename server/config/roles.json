@@ -1,0 +1,18 @@
+{
+  "Client": [
+
+  ],
+
+  "Musician": [
+    "getEvents",
+    "addEvent",
+    "showTracks",
+    "addTrack",
+    "showProfile",
+    "editProfile"
+  ],
+
+  "Host": [
+
+  ]
+}
