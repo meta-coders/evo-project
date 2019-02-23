@@ -10,6 +10,12 @@ module.exports = client;
 
 const GET_EVENTS = `SELECT * FROM "Event"`;
 
+const GET_PROPOSALS = `
+SELECT * FROM "Proposal"
+LEFT JOIN "Event" ON "Proposal"."EventId" = "Event"."EventId"
+LEFT JOIN "Host" ON "Proposal"."HostId" = "Host"."HostId"
+LEFT JOIN "Musician" ON "Proposal"."MusicianId" = "Musician"."MusicianId"`;
+
 const CREATE_PROPOSAL = `
 INSERT INTO "Proposal" ("EventId", "HostId", "MusicianId") 
 VALUES ($1, $2, $3)`;
@@ -28,6 +34,18 @@ const getEvents = async (db, req, res) => {
 
   const { rows: events } = await db.query(GET_EVENTS);
   res.json({ events });
+};
+
+const getProposals = async (db, req, res) => {
+  const { sessionId } = req.cookies;
+  const { rows: [user] } = await db.query(getUser, [sessionId]);
+
+  if (!user) {
+    return 401;
+  }
+
+  const { rows: proposals } = await db.query(GET_PROPOSALS);
+  res.json({ proposals });
 };
 
 const propose = async (db, req) => {
@@ -61,6 +79,14 @@ const vote = async (db, req) => {
 client.get('/events', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
   getEvents(dv, req, res)
+    .then(code => res.sendStatus(code || 200))
+    .catch(() => res.sendStatus(500))
+    .finally(() => db.end());
+});
+
+client.get('/proposals', async (req, res) => {
+  const db = await connect(env.DATABASE_URL);
+  getProposals(db, req, res)
     .then(code => res.sendStatus(code || 200))
     .catch(() => res.sendStatus(500))
     .finally(() => db.end());
