@@ -5,6 +5,11 @@ CREATE TABLE IF NOT EXISTS "User" (
   "Role"     TEXT
 );
 
+CREATE TABLE IF NOT EXISTS "Session" (
+  "SessionId" TEXT PRIMARY KEY,
+  "UserId"    INTEGER REFERENCES "User" ("UserId")
+);
+
 CREATE TABLE IF NOT EXISTS "Client" (
   "UserId" INTEGER REFERENCES "User" ("UserId"),
   "Avatar" TEXT
@@ -13,7 +18,7 @@ CREATE TABLE IF NOT EXISTS "Client" (
 CREATE TABLE IF NOT EXISTS "Musician" (
   "UserId"      INTEGER REFERENCES "User" ("UserId"),
   "Name"        TEXT,
-  "Aavatar"     TEXT,
+  "Avatar"     TEXT,
   "Description" TEXT,
   "Tracks"      JSON
 );

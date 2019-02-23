@@ -2,26 +2,56 @@
 
 const express = require('express');
 const { connect } = require('../src/db');
+const { generateSID } = require('./utils');
 
 const auth = express.Router();
 
 module.exports = auth;
 
-const userByEmail = email => `
-SELECT *
-FROM "User"
-WHERE "Email" = ${email}`;
+const USER_BY_EMAIL = 'SELECT * FROM "User" WHERE "Email" = $1';
+const CREATE_SESSION = 'INSERT INTO "Session" VALUES ($1, $2)';
+const DROP_SESSION = `DELETE FROM "Session" WHERE "SessionId" = $1`;
 
-auth.post('/login', async (req, res) => {
+const validateCredentials = (user, password) => {
+  if (!user) return false;
+  return user.password === password;
+};
+
+const signin = async (db, req, res) => {
   const { email, password } = req.body;
-  const db = await connect(env.DATABASE_URL);
-  const query = userByEmail(email);
 
-  try {
-    const { rows } = await db.query(query);
+  const { rows: [user] } = await db.query(USER_BY_EMAIL, [email]);
+  const valid = validateCredentials(user, password);
 
-  } catch (e) {
-    res.sendStatus(500);
+  if (!valid) {
+    return 403;
   }
+
+  const sessionId = generateSID(env.SID_LENGTH);
+  await db.query(CREATE_SESSION, [user.UserId, sessionId]);
+
+  res.cookie('sessionId', sessionId);
+  res.json({ role: user.Role });
+};
+
+const signout = async (db, req, res) => {
+  const { sessionId } = req.cookies;
+  await db.query(DROP_SESSION, [sessionId]);
+  res.clearCookie('sessionId');
+};
+
+auth.post('/signin', async (req, res) => {
+  const db = await connect(env.DATABASE_URL);
+  signin(db, req, res)
+    .then(code => res.status(code || 200))
+    .catch(() => res.status(500))
+    .finally(() => db.end());
 });
 
+auth.post('/signout', async (req, res) => {
+  const db = await connect(env.DATABASE_URL);
+  signout(db, req, res)
+    .then(() => res.status(200))
+    .catch(() => res.status(500))
+    .finally(() => db.end());
+});
