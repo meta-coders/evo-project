@@ -14,7 +14,8 @@ const GET_PROPOSALS = `
 SELECT * FROM "Proposal"
 LEFT JOIN "Event" ON "Proposal"."EventId" = "Event"."EventId"
 LEFT JOIN "Host" ON "Proposal"."HostId" = "Host"."HostId"
-LEFT JOIN "Musician" ON "Proposal"."MusicianId" = "Musician"."MusicianId"`;
+LEFT JOIN "Musician" ON "Proposal"."MusicianId" = "Musician"."MusicianId"
+WHERE NOT "Proposal"."Accepted"`;
 
 const CREATE_PROPOSAL = `
 INSERT INTO "Proposal" ("EventId", "HostId", "MusicianId") 
