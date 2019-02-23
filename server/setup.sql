@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "User" (
   "UserId"   SERIAL PRIMARY KEY,
-  "Email"    TEXT,
+  "Email"    TEXT UNIQUE,
   "Password" TEXT,
   "Role"     TEXT
 );
