@@ -9,6 +9,7 @@ import UserLogo from '../static/user.png';
 const styles = theme => ({
   card: {
     width: '100%',
+    height: '120px',
     backgroundColor: theme.palette.background.paper
   },
   avatar: {
@@ -28,7 +29,7 @@ const styles = theme => ({
 const EventCard = ({ classes, className, name, date, participants, host }) => {
   return (
     <Card className={classNames(classes.card, className)}>
-      <div className="row full-height items-center m-mx-lg">
+      <div className="row full-height items-center m-mx-lg no-wrap">
         <Avatar alt="eventIcon" src={UserLogo} className={classes.avatar} />
         <div className="column m-ml-lg">
           <div className={classes.eventName}>{name}</div>
