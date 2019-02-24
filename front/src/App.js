@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Switch, Route } from 'react-router';
 
-import { EventCardContainer } from './containers';
-import { LoginPage } from './pages';
+import { EventCardContainer, LoginPageContainer } from './containers';
 
 import './App.css';
 
@@ -12,7 +11,7 @@ class App extends Component {
       <div>
         <Switch>
           <Route exact path="/eventCard" component={EventCardContainer} />
-          <Route exact path="/login" component={LoginPage} />
+          <Route exact path="/login" component={LoginPageContainer} />
         </Switch>
       </div>
     );
