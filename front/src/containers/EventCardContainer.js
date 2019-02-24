@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import injectSheet from 'react-jss';
 
-import { EventCard } from '../components/cards';
+import { EventCard } from '../components';
 
 import UserLogo from '../static/user.png';
 

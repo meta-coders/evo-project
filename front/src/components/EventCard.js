@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import propTypes from 'prop-types';
 import classNames from 'classnames';
 
-import UserLogo from '../../static/user.png';
+import UserLogo from '../static/user.png';
 
 const styles = theme => ({
   card: {
