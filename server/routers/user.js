@@ -41,7 +41,10 @@ const getUserDetails = async (db, req, res) => {
 user.get('/details', async (req, res) => {
   const db = await connect(env.DATABASE_URL);
   getUserDetails(db, req, res)
-    .then(code => res.sendStatus(code || 200))
-    .catch(() => res.sendStatus(500))
-    .finally(() => db.end());
+    .then(code => res.status(code || 200))
+    .catch(() => res.status(500))
+    .finally(() => {
+      res.end();
+      db.end();
+    });
 });
