@@ -8,7 +8,10 @@ const client = express.Router();
 
 module.exports = client;
 
-const GET_EVENTS = `SELECT * FROM "Event"`;
+const GET_EVENTS = `
+SELECT * 
+FROM "Event"
+JOIN "Host" ON "Event"."HostId" = "Host"."HostId"`;
 
 const GET_PROPOSALS = `
 SELECT * FROM "Proposal"
@@ -25,6 +28,8 @@ const CREATE_VOTE = `
 INSERT INTO "Vote" ("ProposalId", "ClientId") 
 VALUES ($1, $2)`;
 
+const GET_MUSICIAN = `SELECT * FROM "Musician" WHERE "MusicianId" = $1`;
+
 const getEvents = async (db, req, res) => {
   const { sessionId } = req.cookies;
   const { rows: [user] } = await db.query(GET_USER, [sessionId]);
@@ -34,6 +39,17 @@ const getEvents = async (db, req, res) => {
   }
 
   const { rows: events } = await db.query(GET_EVENTS);
+
+  for (const event of events) {
+    const musicianIds = event.MusicianIds;
+    event.Musicians = [];
+    for (const id of musicianIds) {
+      const { rows: [musician] } = await db.query(GET_MUSICIAN, [id]);
+      event.Musicians.push(musician);
+    }
+    delete event.MusicianIds;
+  }
+
   res.json({ events });
 };
 
