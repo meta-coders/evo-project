@@ -8,13 +8,13 @@ const auth = express.Router();
 
 module.exports = auth;
 
-const USER_BY_EMAIL = 'SELECT * FROM "User" WHERE "Email" = $1';
-const CREATE_SESSION = 'INSERT INTO "Session" VALUES ($1, $2)';
-const DROP_SESSION = `DELETE FROM "Session" WHERE "SessionId" = $1`;
+const USER_BY_EMAIL = 'SELECT * FROM "user" WHERE email = $1';
+const CREATE_SESSION = 'SELECT create_session($1, $2)';
+const DROP_SESSION = 'SELECT drop_session($1)';
 
 const validateCredentials = (user, password) => {
   if (!user) return false;
-  return user.Password === password;
+  return user.password === password;
 };
 
 const signin = async (db, req, res) => {
@@ -28,7 +28,7 @@ const signin = async (db, req, res) => {
   }
 
   const sessionId = generateSID(env.SID_LENGTH);
-  await db.query(CREATE_SESSION, [sessionId, user.UserId]);
+  await db.query(CREATE_SESSION, [sessionId, user.user_id]);
 
   res.cookie('sessionId', sessionId);
   res.json({ role: user.Role });

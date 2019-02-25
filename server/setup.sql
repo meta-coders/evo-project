@@ -1,62 +1,86 @@
-CREATE TABLE IF NOT EXISTS "User" (
-  "UserId"   SERIAL PRIMARY KEY,
-  "Email"    TEXT UNIQUE,
-  "Password" TEXT,
-  "Role"     TEXT
+CREATE TABLE IF NOT EXISTS "user" (
+  user_id   SERIAL PRIMARY KEY,
+  email     TEXT UNIQUE,
+  password  TEXT,
+  role      TEXT
 );
 
-CREATE TABLE IF NOT EXISTS "Session" (
-  "SessionId" TEXT PRIMARY KEY,
-  "UserId"    INTEGER REFERENCES "User" ("UserId")
+CREATE TABLE IF NOT EXISTS session (
+  session_id TEXT PRIMARY KEY,
+  user_id    INTEGER REFERENCES "user" (user_id)
 );
 
-CREATE TABLE IF NOT EXISTS "Client" (
-  "ClientId"        SERIAL PRIMARY KEY,
-  "UserId"          INTEGER REFERENCES "User" ("UserId"),
-  "ClientAvatar"    TEXT
+CREATE TABLE IF NOT EXISTS client (
+  client_id        SERIAL PRIMARY KEY,
+  user_id          INTEGER REFERENCES "user" (user_id),
+  client_avatar    TEXT
 );
 
-CREATE TABLE IF NOT EXISTS "Musician" (
-  "MusicianId"          SERIAL PRIMARY KEY,
-  "UserId"              INTEGER REFERENCES "User" ("UserId"),
-  "MusicianName"        TEXT,
-  "MusicianAvatar"      TEXT,
-  "MusicianDescription" TEXT,
-  "MusicianTracks"      JSON
+CREATE TABLE IF NOT EXISTS musician (
+  musician_id          SERIAL PRIMARY KEY,
+  user_id              INTEGER REFERENCES "user" (user_id),
+  musician_name        TEXT,
+  musician_avatar      TEXT,
+  musician_description TEXT,
+  musician_tracks      JSON
 );
 
-CREATE TABLE IF NOT EXISTS "Host" (
-  "HostId"          SERIAL PRIMARY KEY,
-  "UserId"          INTEGER REFERENCES "User" ("UserId"),
-  "HostName"        TEXT,
-  "HostAvatar"      TEXT,
-  "HostInterior"    TEXT[],
-  "HostCity"        TEXT,
-  "HostAddress"     TEXT,
-  "HostDescription" TEXT
+CREATE TABLE IF NOT EXISTS host (
+  host_id          SERIAL PRIMARY KEY,
+  user_id          INTEGER REFERENCES "user" (user_id),
+  host_name        TEXT,
+  host_avatar      TEXT,
+  host_interior    TEXT[],
+  host_city        TEXT,
+  host_address     TEXT,
+  host_description TEXT
 );
 
-CREATE TABLE IF NOT EXISTS "Event" (
-  "EventId"          SERIAL PRIMARY KEY,
-  "HostId"           INTEGER REFERENCES "User" ("UserId"),
-  "MusicianIds"      INTEGER[],
-  "EventTitle"       TEXT,
-  "EventDescription" TEXT,
-  "EventDate"        DATE,
-  "EventStartTime"   TIME,
-  "EventEndTime"     TIME
+CREATE TABLE IF NOT EXISTS event (
+  event_id          SERIAL PRIMARY KEY,
+  host_id           INTEGER REFERENCES "user" (user_id),
+  musician_ids      INTEGER[],
+  event_title       TEXT,
+  event_description TEXT,
+  event_date        DATE,
+  event_start_time  TIME,
+  event_end_time    TIME
 );
 
-CREATE TABLE IF NOT EXISTS "Proposal" (
-  "ProposalId"         SERIAL PRIMARY KEY,
-  "EventId"            INTEGER REFERENCES "Event" ("EventId"),
-  "HostId"             INTEGER REFERENCES "Host" ("HostId"),
-  "MusicianId"         INTEGER REFERENCES "Musician" ("MusicianId"),
-  "AcceptedByMusician" BOOLEAN,
-  "AcceptedByHost"     BOOLEAN
+CREATE TABLE IF NOT EXISTS proposal (
+  proposal_id          SERIAL PRIMARY KEY,
+  event_id             INTEGER REFERENCES event (event_id),
+  host_id              INTEGER REFERENCES host (host_id),
+  musician_id          INTEGER REFERENCES musician (musician_id),
+  accepted_by_musician BOOLEAN,
+  accepted_by_host     BOOLEAN
 );
 
-CREATE TABLE IF NOT EXISTS "Vote" (
-  "ProposalId" INTEGER REFERENCES "Proposal" ("ProposalId"),
-  "ClientId"   INTEGER REFERENCES "Client" ("ClientId")
+CREATE TABLE IF NOT EXISTS vote (
+  proposal_id INTEGER REFERENCES proposal (proposal_id),
+  client_id   INTEGER REFERENCES client (client_id)
 );
+
+
+-- Create user session
+CREATE OR REPLACE FUNCTION create_session(session_id TEXT, user_id INTEGER)
+RETURNS VOID
+AS $$
+ BEGIN
+  INSERT INTO session VALUES (session_id, user_id);
+ END;
+$$
+
+LANGUAGE 'plpgsql';
+
+-- Drop user session
+CREATE OR REPLACE FUNCTION drop_session(sid TEXT)
+  RETURNS VOID
+AS
+$$
+BEGIN
+  DELETE FROM session WHERE session_id = sid;
+END;
+$$
+
+LANGUAGE 'plpgsql';
