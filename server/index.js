@@ -20,7 +20,7 @@ app.use(express.static('dist'));
 
 app.use(api);
 api.use('/auth', auth);
-api.use('/user', user);
+// api.use('/user', user);
 
 app.listen(env.PORT, env.HOST, () => {
   db.setup(env.DATABASE_URL)
