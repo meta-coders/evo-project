@@ -8,7 +8,7 @@ const auth = express.Router();
 
 module.exports = auth;
 
-const USER_BY_EMAIL = 'SELECT * FROM "user" WHERE email = $1';
+const USER_BY_EMAIL = 'SELECT * FROM user_by_email($1)';
 const CREATE_SESSION = 'SELECT create_session($1, $2)';
 const DROP_SESSION = 'SELECT drop_session($1)';
 
